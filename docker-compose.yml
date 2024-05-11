@@ -1,0 +1,39 @@
+version: '3.8'
+services:
+
+  project:
+    image: node:20-alpine
+    container_name: project
+    volumes:
+      - ./project:/usr/src/app
+    ports:
+      - 3000:3000
+    working_dir: /usr/src/app
+    tty: true
+    depends_on:
+      - mcguysdb
+    command: npm run start:dev
+
+  mcguysdb:
+    image: postgis/postgis:13-master
+    container_name: mcguysdb
+    volumes:
+      - ./db/mcguysdb:/var/lib/postgresql/data
+    ports:
+      - 5433:5432
+    environment:
+      POSTGRES_USER: 'oclock'
+      POSTGRES_PASSWORD: 'passw0rd'
+      POSTGRES_DB: 'mcguys'
+    restart: always
+
+  studio:
+    image: timothyjmiller/prisma-studio:latest
+    container_name: studio
+    restart: unless-stopped
+    ports:
+      - 5555:5555
+    env_file:
+      - .env
+    depends_on:
+      - mcguysdb
