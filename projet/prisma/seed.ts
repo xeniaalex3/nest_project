@@ -1,10 +1,46 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, Role } from '@prisma/client';
 
 // initialize Prisma Client
 const prisma = new PrismaClient();
 
 async function main() {
   // Création des données d'initialisation
+  const firstRequest = await prisma.user.create({
+    data: {
+      name: 'Chris',
+      email: 'chris@marley.fr',
+      password: '123456',
+      role: Role.USER,
+      posts: {
+        create: {
+          title: 'Meu primeiro post',
+          comments: { content: 'Este é um ótimo post!' },
+        },
+      },
+    },
+  });
+
+  const secondRequest = await prisma.user.create({
+    data: {
+      name: 'Maria',
+      email: 'maria@example.com',
+      password: '456',
+      role: Role.ADMIN,
+      posts: {
+        create: [
+          {
+            title: 'Post da Maria',
+            comments: { content: 'Belo post, Maria!' },
+          },
+          {
+            title: 'Outro post da Maria',
+            comments: { content: 'Continue assim!' },
+          },
+        ],
+      },
+    },
+  });
+  await Promise.all([firstRequest, secondRequest]);
 }
 
 // execute the main function
