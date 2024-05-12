@@ -1,26 +1,34 @@
 import { Injectable } from '@nestjs/common';
-import { CreatePostDto } from './dto/create-post.dto';
-import { UpdatePostDto } from './dto/update-post.dto';
+import { PrismaService } from '../prisma/prisma.service';
+import { Pos, Prisma } from '@prisma/client';
 
 @Injectable()
 export class PostService {
-  create(createPostDto: CreatePostDto) {
-    return 'This action adds a new post';
+  constructor(private readonly prismaService: PrismaService) {}
+
+  async findAll(): Promise<Posts[]> {
+    return this.prismaService.post.findMany();
   }
 
-  findAll() {
-    return `This action returns all post`;
+  async findOne(id: number): Promise<Posts | null> {
+    return this.prismaService.post.findUnique({
+      where: { id },
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} post`;
+  async create(data: Prisma.PostCreateInput): Promise<Posts> {
+    return this.prismaService.post.create({ data });
   }
 
-  update(id: number, updatePostDto: UpdatePostDto) {
-    return `This action updates a #${id} post`;
+  async update(id: number, data: Prisma.PostUpdateInput): Promise<Posts> {
+    return this.prismaService.post.update({ where: { id }, data });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} post`;
+  async remove(id: number): Promise<Posts> {
+    return this.prismaService.post.delete({ where: { id } });
+  }
+
+  async getCommentsByUserId(userId: number): Promise<Posts[]> {
+    return this.prismaService.post.findMany({ where: { authorId: userId } });
   }
 }

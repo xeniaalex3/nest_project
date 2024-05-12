@@ -1,34 +1,51 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { PostService } from './post.service';
-import { CreatePostDto } from './dto/create-post.dto';
-import { UpdatePostDto } from './dto/update-post.dto';
+import { Post as PrismaPost, Prisma } from '@prisma/client';
 
 @Controller('post')
 export class PostController {
   constructor(private readonly postService: PostService) {}
 
-  @Post()
-  create(@Body() createPostDto: CreatePostDto) {
-    return this.postService.create(createPostDto);
-  }
-
   @Get()
-  findAll() {
+  async findAll(): Promise<PrismaPost[]> {
     return this.postService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id') id: string): Promise<PrismaPost> {
     return this.postService.findOne(+id);
   }
 
+  @Post()
+  create(@Body() data: Prisma.PostCreateInput): Promise<PrismaPost> {
+    return this.postService.create(data);
+  }
+
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updatePostDto: UpdatePostDto) {
-    return this.postService.update(+id, updatePostDto);
+  update(
+    @Param('id') id: string,
+    @Body() data: Prisma.PostUpdateInput,
+  ): Promise<PrismaPost> {
+    return this.postService.update(+id, data);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  remove(@Param('id') id: string): Promise<PrismaPost> {
     return this.postService.remove(+id);
+  }
+
+  @Get('user/:userId')
+  async getCommentsByUserId(
+    @Param('userId') userId: number,
+  ): Promise<Comment[]> {
+    return this.postService.getCommentsByUserId(userId);
   }
 }
