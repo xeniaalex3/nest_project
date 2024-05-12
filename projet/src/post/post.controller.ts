@@ -42,10 +42,10 @@ export class PostController {
     return this.postService.remove(+id);
   }
 
-  @Get('user/:userId')
-  async getCommentsByUserId(
-    @Param('userId') userId: number,
-  ): Promise<Comment[]> {
-    return this.postService.getCommentsByUserId(userId);
-  }
+  // @Get('user/:userId')
+  // async getPostByUserId(
+  //   @Param('userId') userId: number,
+  // ): Promise<PrismaPost[]> {
+  //   return this.postService.getPostByUserId(userId);
+  // }
 }
