@@ -7,18 +7,29 @@ export class UserService {
   constructor(private readonly prismaService: PrismaService) {}
 
   public async findAll(): Promise<User[]> {
-    return this.prismaService.user.findMany();
+    return this.prismaService.user.findMany({
+      include: {
+        posts: true,
+      },
+    });
   }
 
   public async findOne(id: number): Promise<User> {
     return this.prismaService.user.findUnique({
       where: { id },
+      include: {
+        posts: true,
+      },
     });
   }
 
   public async create(userData: Prisma.UserCreateInput): Promise<User> {
-    return this.prismaService.user.create({
-      data: {
+    return this.prismaService.user.upsert({
+      where: {
+        email: userData.email,
+      },
+      update: {},
+      create: {
         ...userData,
       },
     });

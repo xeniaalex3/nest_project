@@ -5,8 +5,12 @@ const prisma = new PrismaClient();
 
 async function main() {
   // Création des données d'initialisation
-  const firstRequest = await prisma.user.create({
-    data: {
+  const firstRequest = await prisma.user.upsert({
+    where: {
+      email: 'chris@marley.fr',
+    },
+    update: {},
+    create: {
       name: 'Chris',
       email: 'chris@marley.fr',
       password: '123456',
@@ -20,8 +24,12 @@ async function main() {
     },
   });
 
-  const secondRequest = await prisma.user.create({
-    data: {
+  const secondRequest = await prisma.user.upsert({
+    where: {
+      email: 'chris@marley.fr',
+    },
+    update: {},
+    create: {
       name: 'Maria',
       email: 'maria@example.com',
       password: '456',

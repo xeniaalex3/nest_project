@@ -25,10 +25,10 @@ export class UserController {
   }
 
   @Post()
-  public async create(
-    @Body() createUserDto: Prisma.UserCreateInput,
+  public async createUserWithPost(
+    @Body() userData: Prisma.UserCreateInput,
   ): Promise<User> {
-    return this.userService.create(createUserDto);
+    return this.userService.create(userData);
   }
 
   @Patch(':id')
