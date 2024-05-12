@@ -1,11 +1,11 @@
 version: '3.8'
 services:
 
-  project:
+  projet:
     image: node:20-alpine
-    container_name: project
+    container_name: projet
     volumes:
-      - ./project:/usr/src/app
+      - ./projet:/usr/src/app
     ports:
       - 3000:3000
     working_dir: /usr/src/app
