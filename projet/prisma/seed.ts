@@ -48,7 +48,17 @@ async function main() {
       },
     },
   });
-  await Promise.all([firstRequest, secondRequest]);
+
+  const thirdRequest = await prisma.post.create({
+    data: {
+      title: 'Outro post da Maria',
+      author: {
+        connect: { email: 'maria@example.com' },
+      },
+      comments: { content: 'Continue assim!' },
+    },
+  });
+  await Promise.all([firstRequest, secondRequest, thirdRequest]);
 }
 
 // execute the main function

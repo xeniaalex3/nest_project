@@ -50,16 +50,6 @@ export class UserService {
   }
 
   public async remove(id: number): Promise<User> {
-    await this.prismaService.posts.deleteMany({
-      where: {
-        authorId: id,
-      },
-    });
-
-    return this.prismaService.user.delete({
-      where: {
-        id,
-      },
-    });
+    return this.prismaService.user.delete({ where: { id } });
   }
 }

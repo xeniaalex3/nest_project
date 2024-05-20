@@ -14,6 +14,8 @@ import { Post as PrismaPost, Prisma } from '@prisma/client';
 import { HttpExceptionFilter } from 'src/exceptions/http-exception';
 import { FailedException } from 'src/exceptions/failed.exception';
 import { QuotaInterceptor } from 'src/interceptor/quota.interceptor';
+import { CreatePostDto } from './dto/create-post.dto';
+import { UpdatePostDto } from './dto/update-post.dto';
 
 @Controller('post')
 @UseFilters(HttpExceptionFilter)
@@ -32,30 +34,30 @@ export class PostController {
   }
 
   @Post()
-  create(@Body() data: Prisma.PostCreateInput): Promise<PrismaPost> {
-    if (!data.author) {
+  create(@Body() dataPost: CreatePostDto): Promise<PrismaPost> {
+    if (!dataPost.authorId) {
       throw new FailedException('AuthorID is required');
     }
-    return this.postService.create(data);
+
+    const postData: Prisma.PostCreateInput = {
+      title: dataPost.title,
+      comments: dataPost.comments,
+      author: { connect: { id: dataPost.authorId } },
+    };
+
+    return this.postService.create(postData);
   }
 
   @Patch(':id')
   update(
     @Param('id') id: string,
-    @Body() data: Prisma.PostUpdateInput,
+    @Body() dataUpdate: UpdatePostDto,
   ): Promise<PrismaPost> {
-    return this.postService.update(+id, data);
+    return this.postService.update(+id, dataUpdate);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string): Promise<PrismaPost> {
     return this.postService.remove(+id);
   }
-
-  // @Get('user/:userId')
-  // async getPostByUserId(
-  //   @Param('userId') userId: number,
-  // ): Promise<PrismaPost[]> {
-  //   return this.postService.getPostByUserId(userId);
-  // }
 }
