@@ -6,17 +6,22 @@ import {
   Patch,
   Param,
   Delete,
+  UseFilters,
+  UseInterceptors,
 } from '@nestjs/common';
 import { PostService } from './post.service';
 import { Post as PrismaPost, Prisma } from '@prisma/client';
-import { ApiTags } from '@nestjs/swagger';
+import { HttpExceptionFilter } from 'src/exceptions/http-exception';
+import { FailedException } from 'src/exceptions/failed.exception';
+import { QuotaInterceptor } from 'src/interceptor/quota.interceptor';
 
-@ApiTags('post')
 @Controller('post')
+@UseFilters(HttpExceptionFilter)
 export class PostController {
   constructor(private readonly postService: PostService) {}
 
   @Get()
+  @UseInterceptors(QuotaInterceptor)
   async findAll(): Promise<PrismaPost[]> {
     return this.postService.findAll();
   }
@@ -28,6 +33,9 @@ export class PostController {
 
   @Post()
   create(@Body() data: Prisma.PostCreateInput): Promise<PrismaPost> {
+    if (!data.author) {
+      throw new FailedException('AuthorID is required');
+    }
     return this.postService.create(data);
   }
 
