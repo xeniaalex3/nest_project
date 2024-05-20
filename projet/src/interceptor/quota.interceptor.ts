@@ -19,7 +19,6 @@ export class QuotaInterceptor implements NestInterceptor {
     if (quotaUsed >= quotaLimit) {
       throw new FailedException('Quota lmit exceeded');
     }
-
     return next.handle();
   }
 }
